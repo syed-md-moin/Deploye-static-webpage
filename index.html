@@ -2,31 +2,156 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Simple Draw & Notes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>✨ Studio Pro — Drawing & Notes</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="toolbar">
-  <button id="penBtn" class="active" title="Pen">✏️</button>
-  <button id="eraserBtn" title="Eraser">🧹</button>
-  <button id="textBtn" title="Text">T</button>
-  <div class="sep"></div>
-  <input type="color" id="colorPicker" value="#1e1e2e" title="Color">
-  <input type="range" id="sizeSlider" min="1" max="20" value="3" title="Size">
-  <div class="sep"></div>
-  <button id="clearBtn" title="Clear">🗑️</button>
+<!-- Animated Background -->
+<div class="bg-anim" id="bgAnim"></div>
+
+<!-- Top Bar -->
+<header class="topbar">
+  <div class="topbar-left">
+    <span class="logo">✦ Studio Pro</span>
+    <span class="version">v2.0</span>
+  </div>
+  <div class="topbar-center">
+    <button class="btn" id="undoBtn" title="Undo (Ctrl+Z)">↩️ Undo</button>
+    <button class="btn" id="redoBtn" title="Redo (Ctrl+Y)">↪️ Redo</button>
+    <div class="sep-v"></div>
+    <button class="btn" id="saveBtn" title="Save (Ctrl+S)">💾 Save</button>
+    <button class="btn" id="loadBtn" title="Load (Ctrl+L)">📂 Load</button>
+    <button class="btn" id="exportBtn" title="Export PNG">📸 Export</button>
+    <div class="sep-v"></div>
+    <button class="btn" id="themeBtn" title="Toggle Theme">🌙</button>
+    <button class="btn" id="gridBtn" title="Toggle Grid">⊞ Grid</button>
+    <button class="btn" id="zenBtn" title="Zen Mode">🧘 Zen</button>
+  </div>
+  <div class="topbar-right">
+    <span class="coords" id="coords">X: 0, Y: 0</span>
+    <span class="zoom-level" id="zoomLevel">100%</span>
+  </div>
+</header>
+
+<!-- Main Layout -->
+<div class="main-layout">
+
+  <!-- Left Toolbar -->
+  <aside class="toolbar">
+    <div class="tool-group">
+      <button class="tool-btn active" data-tool="pen" title="Pen (P)">✏️</button>
+      <button class="tool-btn" data-tool="eraser" title="Eraser (E)">🧹</button>
+      <button class="tool-btn" data-tool="line" title="Line (L)">📏</button>
+      <button class="tool-btn" data-tool="rect" title="Rectangle (R)">▭</button>
+      <button class="tool-btn" data-tool="circle" title="Circle (C)">⭕</button>
+      <button class="tool-btn" data-tool="arrow" title="Arrow (A)">➡️</button>
+      <button class="tool-btn" data-tool="spray" title="Spray (S)">💨</button>
+      <button class="tool-btn" data-tool="fill" title="Fill (F)">🪣</button>
+      <button class="tool-btn" data-tool="text" title="Text (T)">🔤</button>
+    </div>
+    <div class="tool-group">
+      <button class="tool-btn" id="symHBtn" title="Horizontal Symmetry (H)">↔️</button>
+      <button class="tool-btn" id="symVBtn" title="Vertical Symmetry (V)">↕️</button>
+    </div>
+    <div class="tool-group">
+      <button class="tool-btn" id="clearBtn" title="Clear All">🗑️</button>
+      <button class="tool-btn" id="bgColorBtn" title="Canvas Background">🎨</button>
+    </div>
+  </aside>
+
+  <!-- Center: Canvas + Properties -->
+  <div class="center-area">
+    <!-- Properties Bar -->
+    <div class="props-bar">
+      <div class="prop-group">
+        <label>Size</label>
+        <input type="range" id="sizeSlider" min="1" max="80" value="4">
+        <span class="prop-val" id="sizeVal">4</span>
+      </div>
+      <div class="prop-group">
+        <label>Opacity</label>
+        <input type="range" id="opacitySlider" min="1" max="100" value="100">
+        <span class="prop-val" id="opacityVal">100%</span>
+      </div>
+      <div class="prop-group">
+        <label>Brush</label>
+        <select id="brushStyle">
+          <option value="solid">Solid</option>
+          <option value="glow">Glow ✨</option>
+          <option value="shadow">Shadow</option>
+          <option value="neon">Neon 🌈</option>
+          <option value="rainbow">Rainbow 🎨</option>
+        </select>
+      </div>
+      <div class="prop-group">
+        <label>Fill</label>
+        <label class="toggle"><input type="checkbox" id="fillToggle"><span></span></label>
+      </div>
+    </div>
+
+    <!-- Canvas Area -->
+    <div class="canvas-container" id="canvasContainer">
+      <canvas id="gridCanvas"></canvas>
+      <canvas id="drawCanvas"></canvas>
+      <canvas id="overlayCanvas"></canvas>
+      <!-- Custom Cursor -->
+      <div class="custom-cursor" id="customCursor"></div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+      <span id="statusTool">Tool: Pen</span>
+      <span id="statusLayer">Layer: 1</span>
+      <span id="statusZoom">Zoom: 100%</span>
+      <span id="statusMsg" class="status-msg"></span>
+    </div>
+  </div>
+
+  <!-- Right Panel -->
+  <aside class="right-panel">
+    <!-- Color Section -->
+    <div class="panel-section">
+      <h3>🎨 Color</h3>
+      <div class="color-row">
+        <input type="color" id="colorPicker" value="#6c5ce7">
+        <input type="color" id="colorPicker2" value="#00cec9" title="Secondary">
+      </div>
+      <div class="color-presets" id="colorPresets"></div>
+      <div class="recent-colors" id="recentColors"></div>
+    </div>
+
+    <!-- Layers Section -->
+    <div class="panel-section">
+      <h3>📑 Layers</h3>
+      <div class="layers-list" id="layersList">
+        <div class="layer-item active" data-layer="0">
+          <span class="layer-vis" title="Toggle Visibility">👁️</span>
+          <span class="layer-name">Layer 1</span>
+          <span class="layer-lock" title="Lock">🔓</span>
+        </div>
+      </div>
+      <button class="btn small" id="addLayerBtn">+ Add Layer</button>
+    </div>
+
+    <!-- Notes Section -->
+    <div class="panel-section notes-section">
+      <h3>📝 Notes</h3>
+      <textarea id="notesArea" placeholder="Type your notes here… (Ctrl+Enter to add to canvas)"></textarea>
+      <div class="notes-actions">
+        <button class="btn small" id="addNoteBtn">+ Add to Canvas</button>
+        <button class="btn small" id="clearNotesBtn">Clear</button>
+      </div>
+    </div>
+  </aside>
 </div>
 
-<div class="canvas-wrap" id="canvasWrap">
-  <canvas id="drawCanvas"></canvas>
-  <canvas id="textCanvas"></canvas>
-</div>
+<!-- Particle Container -->
+<div class="particles-container" id="particlesContainer"></div>
 
-<div class="notes">
-  <h3>📝 Notes</h3>
-  <textarea placeholder="Type your notes here…"></textarea>
-</div>
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
 <script src="script.js"></script>
 </body>
