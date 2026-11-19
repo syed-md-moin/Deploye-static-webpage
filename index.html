@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple Draw & Notes</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="toolbar">
+  <button id="penBtn" class="active" title="Pen">✏️</button>
+  <button id="eraserBtn" title="Eraser">🧹</button>
+  <button id="textBtn" title="Text">T</button>
+  <div class="sep"></div>
+  <input type="color" id="colorPicker" value="#1e1e2e" title="Color">
+  <input type="range" id="sizeSlider" min="1" max="20" value="3" title="Size">
+  <div class="sep"></div>
+  <button id="clearBtn" title="Clear">🗑️</button>
+</div>
+
+<div class="canvas-wrap" id="canvasWrap">
+  <canvas id="drawCanvas"></canvas>
+  <canvas id="textCanvas"></canvas>
+</div>
+
+<div class="notes">
+  <h3>📝 Notes</h3>
+  <textarea placeholder="Type your notes here…"></textarea>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>   
